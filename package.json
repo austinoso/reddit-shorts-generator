@@ -2,10 +2,17 @@
   "name": "shorts-bot",
   "version": "0.1.0",
   "description": "YouTube and TikTok shorts bot",
-  "main": "main.js",
+  "main": "main.ts",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Austin",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "typescript": "^4.9.4"
+  }
 }

@@ -1,19 +1,14 @@
-import axios from "axios";
 import * as dotenv from "dotenv";
+import { fetchPost } from "./src/utils/reddit/posts";
+
 dotenv.config();
 
 async function main() {
-  const posts = await getPosts();
+  const url =
+    "https://www.reddit.com/r/AskReddit/comments/11r5b1r/whats_the_best_thing_about_the_us.json";
+
+  const posts = await fetchPost(url);
   console.log(posts);
-}
-
-async function getPosts() {
-  const resData = await axios.get(
-    "https://www.reddit.com/r/askreddit/hot.json"
-  );
-
-  const posts = resData.data.data.children;
-  return posts;
 }
 
 main();

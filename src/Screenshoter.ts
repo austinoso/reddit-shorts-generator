@@ -41,13 +41,14 @@ export default class Screenshoter {
 
   public async takeScreenshotOfComment(id: string) {
     const page = this.page;
+    await page.waitForSelector(`#${id}`);
     const element = await page.$(`#${id}`);
     try {
       await element.screenshot({
         path: `./tmp/screenshot-${id}.png`,
       });
     } catch (e) {
-      console.log("Error taking screenshot of comment", e);
+      console.log("Error taking screenshot of comment: " + id, e);
     }
   }
 }

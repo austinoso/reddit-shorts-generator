@@ -41,14 +41,29 @@ export default class Screenshoter {
 
   public async takeScreenshotOfComment(id: string) {
     const page = this.page;
-    await page.waitForSelector(`#${id}`);
-    const element = await page.$(`#${id}`);
+    const selector = `#${id}`;
+    await page.waitForSelector(selector);
+    const element = await page.$(selector);
     try {
       await element.screenshot({
-        path: `./tmp/screenshot-${id}.png`,
+        path: `./tmp/comment-${id}.png`,
       });
     } catch (e) {
       console.log("Error taking screenshot of comment: " + id, e);
+    }
+  }
+
+  public async takeScreenshootfTitle() {
+    const page = this.page;
+    const selector = '[data-test-id="post-content"]';
+    await page.waitForSelector(selector);
+    const element = await page.$(selector);
+    try {
+      await element.screenshot({
+        path: `./tmp/title.png`,
+      });
+    } catch (e) {
+      console.log("Error taking screenshot of title", e);
     }
   }
 }

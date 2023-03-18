@@ -1,6 +1,8 @@
 import axios from "axios";
 
 export async function fetchPost(url) {
+  url = `${url}.json?sort=top`;
+
   const resData = await axios.get(url);
 
   const postData = resData.data[0].data.children[0].data;

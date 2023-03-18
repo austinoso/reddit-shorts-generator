@@ -17,9 +17,9 @@ async function main(postUrl) {
 
 async function saveComments(postUrl, post) {
   await buildTmpDir(post.id);
-  await takeScreenshots(postUrl, post, 10);
+  const screenshotSavePaths = await takeScreenshots(postUrl, post, 10);
 
-  return post;
+  return screenshotSavePaths;
 }
 
 async function takeScreenshots(postUrl, post, amount) {
@@ -47,6 +47,8 @@ async function takeScreenshots(postUrl, post, amount) {
   }
 
   await screenshoter.close();
+
+  return screenshotSavePaths;
 }
 
 const postUrl =

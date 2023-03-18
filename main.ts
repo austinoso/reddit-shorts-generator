@@ -4,22 +4,30 @@ import Screenshoter from "./src/Screenshoter.js";
 import { editVideo, buildEditSpec } from "./src/utils/editor/editor.js";
 import { buildTmpDir } from "./src/utils/buildTmpDir.js";
 import { Post } from "./types/post.js";
+import fs from "fs";
 
 // dotenv.config();
 
 async function main(postUrl: string) {
   const post = await fetchPost(postUrl);
-  const screenshotSavePaths = await saveComments(postUrl, post);
+  const tmpDir = await buildTmpDir(post.id);
 
-  const editSpec = buildEditSpec(post, screenshotSavePaths);
+  // get video data
+  const screenshotSavePaths = await saveComments(postUrl, post);
+  const videoData = buildVideoData(post, screenshotSavePaths);
+
+  // edit video
+  const editSpec = buildEditSpec(videoData);
+  console.log(editSpec);
   // await editVideo(editSpec);
+
+  // remove tmp files
+  fs.rmdirSync(tmpDir, { recursive: true });
   console.log("Done!");
 }
 
 async function saveComments(postUrl: string, post: Post) {
-  await buildTmpDir(post.id);
   const screenshotSavePaths = await takeScreenshots(postUrl, post, 10);
-
   return screenshotSavePaths;
 }
 
@@ -31,7 +39,7 @@ async function takeScreenshots(postUrl: string, post: Post, amount: number) {
   await screenshoter.gotoPage(`${postUrl}?sort=top`);
 
   const screenshotSavePaths = {
-    title: "",
+    title: {},
     comments: [],
   };
 
@@ -50,6 +58,28 @@ async function takeScreenshots(postUrl: string, post: Post, amount: number) {
   await screenshoter.close();
 
   return screenshotSavePaths;
+}
+
+function buildVideoData(post: Post, screenshotSavePaths: any) {
+  const data = {
+    title: post.title,
+    image: screenshotSavePaths.title,
+    id: post.id,
+    comments: [],
+  };
+
+  screenshotSavePaths.comments.forEach((comment: any) => {
+    const commentData = post.comments.find((c: any) => c.id === comment.id);
+    // remove \n from comment
+    commentData.body = commentData.body.replace(/(\r\n|\n|\r)/gm, "");
+
+    data.comments.push({
+      ...commentData,
+      image: comment.path,
+    });
+  });
+
+  return data;
 }
 
 const postUrl =

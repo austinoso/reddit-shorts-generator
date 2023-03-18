@@ -24,6 +24,7 @@ export async function fetchPost(url) {
 
   return {
     title: postData.title,
+    id: postData.name,
     comments: comments,
   };
 }

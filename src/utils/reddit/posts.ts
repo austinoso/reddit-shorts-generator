@@ -1,6 +1,7 @@
 import axios from "axios";
+import { Post, Comment } from "../../../types/post";
 
-export async function fetchPost(url) {
+export async function fetchPost(url): Promise<Post> {
   url = `${url}.json?sort=top`;
 
   const resData = await axios.get(url);
@@ -12,7 +13,7 @@ export async function fetchPost(url) {
   commentsData.sort((a, b) => b.data.score - a.data.score);
 
   // remove deleted comments
-  const comments = [];
+  const comments: Comment[] = [];
   commentsData.forEach((comment) => {
     const data = {
       body: comment.data.body,

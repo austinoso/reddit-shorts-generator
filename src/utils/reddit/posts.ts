@@ -12,18 +12,22 @@ export async function fetchPost(url): Promise<Post> {
   // sort comments by top
   commentsData.sort((a, b) => b.data.score - a.data.score);
 
-  // remove deleted comments
   const comments: Comment[] = [];
-  commentsData.forEach((comment) => {
-    const data = {
-      body: comment.data.body,
-      id: comment.data.name,
-    };
 
-    if (data.body && data.body !== "[deleted]") {
-      comments.push(data);
-    }
-  });
+  for (let i = 0; i < commentsData.length; i++) {
+    const comment = commentsData[i].data;
+
+    // skip unusable comments
+    if (!comment.body) continue;
+    if (comment.body === "[deleted]") continue;
+    if (comment.body === "[removed]") continue;
+    if (comment.body.length > 800) continue;
+
+    comments.push({
+      body: comment.body,
+      id: comment.name,
+    });
+  }
 
   return {
     title: postData.title,

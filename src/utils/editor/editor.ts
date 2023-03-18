@@ -32,7 +32,9 @@ function buildImageClips(videoData, wordsPerSecond) {
 
   const titleClip = {
     duration: calulateDuration(videoData.title, wordsPerSecond),
-    layers: [{ type: "image", path: videoData.image, zoomDirection: null }],
+    layers: [
+      { type: "image", path: videoData.titleImage, zoomDirection: null },
+    ],
   };
 
   clips.push(titleClip);

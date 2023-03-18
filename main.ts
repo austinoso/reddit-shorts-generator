@@ -18,8 +18,7 @@ async function main(postUrl: string) {
 
   // edit video
   const editSpec = buildEditSpec(videoData);
-  console.log(editSpec);
-  // await editVideo(editSpec);
+  await editVideo(editSpec);
 
   // remove tmp files
   fs.rmdirSync(tmpDir, { recursive: true });
@@ -63,7 +62,7 @@ async function takeScreenshots(postUrl: string, post: Post, amount: number) {
 function buildVideoData(post: Post, screenshotSavePaths: any) {
   const data = {
     title: post.title,
-    image: screenshotSavePaths.title,
+    titleImage: screenshotSavePaths.title.path,
     id: post.id,
     comments: [],
   };

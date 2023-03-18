@@ -26,7 +26,6 @@ export default class Screenshoter {
   }
 
   public async close() {
-    console.log("Closing browser...");
     await this.browser.close();
   }
 

@@ -3,26 +3,27 @@ import { fetchPost } from "./src/utils/reddit/posts.js";
 import Screenshoter from "./src/Screenshoter.js";
 import { editVideo, buildEditSpec } from "./src/utils/editor/editor.js";
 import { buildTmpDir } from "./src/utils/buildTmpDir.js";
+import { Post } from "./types/post.js";
 
 // dotenv.config();
 
-async function main(postUrl) {
+async function main(postUrl: string) {
   const post = await fetchPost(postUrl);
-  await saveComments(postUrl, post);
+  const screenshotSavePaths = await saveComments(postUrl, post);
 
-  // const editSpec = buildEditSpec();
+  const editSpec = buildEditSpec(post, screenshotSavePaths);
   // await editVideo(editSpec);
   console.log("Done!");
 }
 
-async function saveComments(postUrl, post) {
+async function saveComments(postUrl: string, post: Post) {
   await buildTmpDir(post.id);
   const screenshotSavePaths = await takeScreenshots(postUrl, post, 10);
 
   return screenshotSavePaths;
 }
 
-async function takeScreenshots(postUrl, post, amount) {
+async function takeScreenshots(postUrl: string, post: Post, amount: number) {
   const comments = post.comments;
 
   const screenshoter = new Screenshoter();

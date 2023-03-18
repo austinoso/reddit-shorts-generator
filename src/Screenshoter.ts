@@ -56,13 +56,13 @@ export default class Screenshoter {
     const selector = `#${id}`;
     const savePath = `./tmp/${postId}/comments/${id}.png`;
     await this.takeScreenshotOfElement(selector, savePath);
-    return savePath;
+    return { id: id, path: savePath };
   }
 
   public async takeScreenshootfTitle(postId: string) {
     const selector = '[data-test-id="post-content"]';
     const savePath = `./tmp/${postId}/title.png`;
     await this.takeScreenshotOfElement(selector, savePath);
-    return savePath;
+    return { id: "title", path: savePath };
   }
 }

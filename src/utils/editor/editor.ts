@@ -34,35 +34,6 @@ export async function buildEditSpec(videoData) {
   return editSpec;
 }
 
-// temp function, can probably be replaced later with length of tts audio
-function calulateDuration(text: string, wordsPerSecond: number) {
-  return text.split(" ").length / wordsPerSecond;
-}
-
-function buildImageClips(videoData, wordsPerSecond) {
-  const clips = [];
-
-  const titleClip = {
-    duration: calulateDuration(videoData.title, wordsPerSecond),
-    layers: [
-      { type: "image", path: videoData.titleImage, zoomDirection: null },
-    ],
-  };
-
-  clips.push(titleClip);
-
-  videoData.comments.forEach((comment) => {
-    const commentClip = {
-      duration: calulateDuration(comment.body, wordsPerSecond),
-      layers: [{ type: "image", path: comment.image, zoomDirection: null }],
-    };
-
-    clips.push(commentClip);
-  });
-
-  return clips;
-}
-
 async function buildImageLayers(videoData, wordsPerSecond) {
   const layers = [];
   const audioTracks = [];

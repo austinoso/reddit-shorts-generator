@@ -1,12 +1,8 @@
 // import * as dotenv from "dotenv";
 import { getPostData } from "./src/utils/reddit/posts.js";
-import Screenshoter from "./src/Screenshoter.js";
 import { editVideo, buildEditSpec } from "./src/utils/editor/editor.js";
-import { buildTmpDir } from "./src/utils/buildTmpDir.js";
-import { Post } from "./types/post.js";
+
 import fs from "fs";
-import { addTTSAudio } from "./src/utils/google/textToSpeech.js";
-import { getAudioDurationInSeconds } from "get-audio-duration";
 
 // dotenv.config();
 

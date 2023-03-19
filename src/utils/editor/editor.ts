@@ -1,6 +1,4 @@
 import editly from "editly";
-import { Post } from "../../../types/post";
-import { getAudioDurationInSeconds } from "get-audio-duration";
 
 export async function editVideo(editSpec: any) {
   await editly(editSpec);

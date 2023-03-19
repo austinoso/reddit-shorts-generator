@@ -9,10 +9,12 @@ export default class Screenshoter {
     this.page = null;
   }
 
-  public async init() {
+  public async init(url) {
     this.browser = await launch({
       executablePath: "/usr/bin/chromium-browser",
     });
+
+    await this.gotoPage(url);
   }
 
   public async screenshotPage(url: string) {
@@ -58,7 +60,7 @@ export default class Screenshoter {
     return { id: id, path: savePath };
   }
 
-  public async takeScreenshootfTitle(postId: string) {
+  public async takeScreenshotOfTitle(postId: string) {
     const selector = '[data-test-id="post-content"]';
     const savePath = `./tmp/${postId}/title.png`;
     await this.takeScreenshotOfElement(selector, savePath);

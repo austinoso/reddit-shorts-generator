@@ -6,16 +6,11 @@ export async function editVideo(editSpec: any) {
   await editly(editSpec);
 }
 
-export async function buildEditSpec(videoData) {
-  const wordsPerSecond = 4.5;
-
-  const { layers, duration, audioTracks } = await buildImageLayers(
-    videoData,
-    wordsPerSecond
-  );
+export async function buildEditSpec(post) {
+  const { layers, duration, audioTracks } = await buildTracks(post);
 
   const editSpec = {
-    outPath: `../output/${[videoData.id]}/${videoData.title}.mp4`,
+    outPath: `../output/${[post.id]}/${post.title.text}.mp4`,
     height: 1920,
     width: 1080,
     defaults: {
@@ -34,29 +29,28 @@ export async function buildEditSpec(videoData) {
   return editSpec;
 }
 
-async function buildImageLayers(videoData, wordsPerSecond) {
+async function buildTracks(post) {
   const layers = [];
   const audioTracks = [];
 
   const titleLayer = {
     type: "image-overlay",
-    path: videoData.titleImage,
-    stop: await getAudioDurationInSeconds(videoData.titleAudio),
+    path: post.title.image,
+    stop: post.title.duration,
   };
 
   layers.push(titleLayer);
-  audioTracks.push(buildAudioTrack(videoData.titleAudio, 0));
+  audioTracks.push(buildAudioTrack(post.title.audio, 0));
 
   let runningDuration = titleLayer.stop;
-  for (let i = 0; i < videoData.comments.length; i++) {
-    const comment = videoData.comments[i];
-    const layerDuration = await getAudioDurationInSeconds(comment.audio);
+  for (let i = 0; i < post.comments.length; i++) {
+    const comment = post.comments[i];
 
     const commentLayer = {
       type: "image-overlay",
       path: comment.image,
       start: runningDuration,
-      stop: layerDuration + runningDuration,
+      stop: comment.duration + runningDuration,
     };
 
     layers.push(commentLayer);
@@ -64,7 +58,7 @@ async function buildImageLayers(videoData, wordsPerSecond) {
     const audioTrack = buildAudioTrack(comment.audio, runningDuration);
     audioTracks.push(audioTrack);
 
-    runningDuration += layerDuration + 0.5;
+    runningDuration += comment.duration;
   }
 
   return { layers, duration: runningDuration, audioTracks };

@@ -1,6 +1,7 @@
 import textToSpeach from "@google-cloud/text-to-speech";
 import fs from "fs";
 import util from "util";
+import { getAudioDurationInSeconds } from "get-audio-duration";
 
 export async function textToSpeech(text: string, savePath: string) {
   const client = new textToSpeach.TextToSpeechClient();
@@ -14,7 +15,9 @@ export async function textToSpeech(text: string, savePath: string) {
   const writeFile = util.promisify(fs.writeFile);
   await writeFile(savePath, response.audioContent, "binary");
   console.log(`Audio content written to file: ${savePath}`);
-  return savePath;
+
+  const duration = await getAudioDurationInSeconds(savePath);
+  return { savePath, duration };
 }
 
 export async function addTTSAudio(videoData) {

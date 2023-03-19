@@ -1,14 +1,18 @@
 import editly from "editly";
 import { Post } from "../../../types/post";
+import { getAudioDurationInSeconds } from "get-audio-duration";
 
 export async function editVideo(editSpec: any) {
   await editly(editSpec);
 }
 
-export function buildEditSpec(videoData) {
+export async function buildEditSpec(videoData) {
   const wordsPerSecond = 4.5;
 
-  const { layers, duration } = buildImageLayers(videoData, wordsPerSecond);
+  const { layers, duration, audioTracks } = await buildImageLayers(
+    videoData,
+    wordsPerSecond
+  );
 
   const editSpec = {
     outPath: `../output/${[videoData.id]}/${videoData.title}.mp4`,
@@ -24,6 +28,7 @@ export function buildEditSpec(videoData) {
         duration: duration,
       },
     ],
+    audioTracks: audioTracks,
   };
 
   return editSpec;
@@ -58,20 +63,23 @@ function buildImageClips(videoData, wordsPerSecond) {
   return clips;
 }
 
-function buildImageLayers(videoData, wordsPerSecond) {
+async function buildImageLayers(videoData, wordsPerSecond) {
   const layers = [];
+  const audioTracks = [];
 
   const titleLayer = {
     type: "image-overlay",
     path: videoData.titleImage,
-    stop: calulateDuration(videoData.title, wordsPerSecond),
+    stop: await getAudioDurationInSeconds(videoData.titleAudio),
   };
 
   layers.push(titleLayer);
+  audioTracks.push(buildAudioTrack(videoData.titleAudio, 0));
 
   let runningDuration = titleLayer.stop;
-  videoData.comments.forEach((comment) => {
-    const layerDuration = calulateDuration(comment.body, wordsPerSecond);
+  for (let i = 0; i < videoData.comments.length; i++) {
+    const comment = videoData.comments[i];
+    const layerDuration = await getAudioDurationInSeconds(comment.audio);
 
     const commentLayer = {
       type: "image-overlay",
@@ -80,11 +88,15 @@ function buildImageLayers(videoData, wordsPerSecond) {
       stop: layerDuration + runningDuration,
     };
 
-    runningDuration += layerDuration;
     layers.push(commentLayer);
-  });
 
-  return { layers, duration: runningDuration };
+    const audioTrack = buildAudioTrack(comment.audio, runningDuration);
+    audioTracks.push(audioTrack);
+
+    runningDuration += layerDuration + 0.5;
+  }
+
+  return { layers, duration: runningDuration, audioTracks };
 }
 
 function buildVideoLayer(duration) {
@@ -93,8 +105,15 @@ function buildVideoLayer(duration) {
 
   return {
     type: "video",
-    path: "./assets/mc-video.mp4",
-    cutTo: bkgVideoStart,
-    stop: duration,
+    path: "./assets/mc-bkg-video.mp4",
+    cutFrom: bkgVideoStart,
+    cutTo: bkgVideoStart + duration,
+  };
+}
+
+function buildAudioTrack(path, start) {
+  return {
+    path: path,
+    start: start,
   };
 }

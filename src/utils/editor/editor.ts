@@ -1,5 +1,7 @@
 import editly from "editly";
 import { getVideoDurationInSeconds } from "get-video-duration";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export async function editVideo(editSpec: any) {
   await editly(editSpec);
@@ -14,7 +16,7 @@ export async function buildEditSpec(post) {
   postTitle = postTitle.replace(/ /g, "-");
 
   const videoLayer = await buildVideoLayer(
-    "./assets/mc-bkg-video.mp4",
+    process.env.VIDEO_BACKGROUND,
     duration
   );
 

@@ -9,17 +9,24 @@ export async function editVideo(editSpec: any) {
 export async function buildEditSpec(post) {
   const { layers, duration, audioTracks } = await buildTracks(post);
 
+  // remove special characters from title
+  let postTitle = post.title.text.replace(/[^a-zA-Z0-9 ]/g, "");
+  // replace spaces with dashes
+  postTitle = postTitle.replace(/ /g, "-");
+
+  const videoLayer = buildVideoLayer("./assets/mc-bkg-video.mp4", duration);
+
   const editSpec = {
-    outPath: `../output/${[post.id]}/${post.title.text}.mp4`,
+    outPath: `../output/${[post.id]}/${postTitle}.mp4`,
     height: 1920,
     width: 1080,
+    outputVolume: "14dB",
     defaults: {
-      layer: { fontPath: "./assets/Patua_One/PatuaOne-Regular.ttf" },
       layerType: { "fill-color": { color: "#00aa00" } },
     },
     clips: [
       {
-        layers: [buildVideoLayer(duration), ...layers],
+        layers: [videoLayer, ...layers],
         duration: duration,
       },
     ],
@@ -64,13 +71,13 @@ async function buildTracks(post) {
   return { layers, duration: runningDuration, audioTracks };
 }
 
-function buildVideoLayer(duration) {
+function buildVideoLayer(videoPath: string, duration: number) {
   const bkgVideolength = 486;
   const bkgVideoStart = Math.random() * (bkgVideolength - duration);
 
   return {
     type: "video",
-    path: "./assets/mc-bkg-video.mp4",
+    path: videoPath,
     cutFrom: bkgVideoStart,
     cutTo: bkgVideoStart + duration,
   };

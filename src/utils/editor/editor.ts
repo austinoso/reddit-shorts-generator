@@ -1,4 +1,5 @@
 import editly from "editly";
+import { getVideoDurationInSeconds } from "get-video-duration";
 
 export async function editVideo(editSpec: any) {
   await editly(editSpec);
@@ -12,7 +13,10 @@ export async function buildEditSpec(post) {
   // replace spaces with dashes
   postTitle = postTitle.replace(/ /g, "-");
 
-  const videoLayer = buildVideoLayer("./assets/mc-bkg-video.mp4", duration);
+  const videoLayer = await buildVideoLayer(
+    "./assets/mc-bkg-video.mp4",
+    duration
+  );
 
   const editSpec = {
     outPath: `../output/${[post.id]}/${postTitle}.mp4`,
@@ -69,8 +73,8 @@ async function buildTracks(post) {
   return { layers, duration: runningDuration, audioTracks };
 }
 
-function buildVideoLayer(videoPath: string, duration: number) {
-  const bkgVideolength = 486;
+async function buildVideoLayer(videoPath: string, duration: number) {
+  const bkgVideolength = await getVideoDurationInSeconds(videoPath);
   const bkgVideoStart = Math.random() * (bkgVideolength - duration);
 
   return {

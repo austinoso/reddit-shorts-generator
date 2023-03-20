@@ -3,6 +3,8 @@ import { Post, Comment } from "../../../types/post";
 import { textToSpeech } from "../../utils/google/textToSpeech.js";
 import Screenshoter from "../../Screenshoter.js";
 import { buildTmpDir } from "../../utils/buildTmpDir.js";
+import fs from "fs";
+import { getAudioDurationInSeconds } from "get-audio-duration";
 
 export async function getPostData(url): Promise<Post> {
   const jsonUrl = `${url}.json?sort=top`;
@@ -40,8 +42,11 @@ export async function getPostData(url): Promise<Post> {
 
 async function buildTitle(postData, screenshoter) {
   // get title image audio
-  const { savePath: titleAudioPath, duration: titleDuration } =
-    await textToSpeech(postData.title, `./tmp/${postData.name}/title.mp3`);
+  const titleAudioPath = `./tmp/${postData.name}/title.mp3`;
+
+  if (!fs.existsSync(titleAudioPath))
+    await textToSpeech(postData.title, titleAudioPath);
+  const titleDuration = await getAudioDurationInSeconds(titleAudioPath);
 
   // get title image
   const { path: titleImagePath } = await screenshoter.takeScreenshotOfTitle(
@@ -72,10 +77,10 @@ async function buildComments(postData, commentsData, screenshoter, title) {
     if (comment.body.length > 800) continue;
 
     // get comment audio
-    const { savePath: audioPath, duration } = await textToSpeech(
-      comment.body,
-      `./tmp/${postData.name}/comments/${comment.name}.mp3`
-    );
+    const audioPath = `./tmp/${postData.name}/comments/${comment.name}.mp3`;
+
+    if (!fs.existsSync(audioPath)) await textToSpeech(comment.body, audioPath);
+    const duration = await getAudioDurationInSeconds(audioPath);
 
     if (runningAudioDuration + duration >= 60) break; // max 60 seconds
     runningAudioDuration += duration;

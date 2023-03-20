@@ -1,0 +1,14 @@
+version: '3.7'
+
+volumes:
+  shorts-bot:    
+
+services:
+  node-bot:
+    build: ./
+    container_name: shorts-bot
+    command: npm run start
+    environment:
+      POST: "${POST}"
+    volumes:
+      - shorts-bot:/app/output

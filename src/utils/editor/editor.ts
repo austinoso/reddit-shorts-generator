@@ -21,7 +21,7 @@ export async function buildEditSpec(post) {
   );
 
   const editSpec = {
-    outPath: `../output/${[post.id]}/${postTitle}.mp4`,
+    outPath: `${post.fileDir}/${postTitle}.mp4`,
     height: 1920,
     width: 1080,
     outputVolume: "14dB",

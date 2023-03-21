@@ -11,7 +11,16 @@ export default class Screenshoter {
 
   public async init(url) {
     this.browser = await launch({
-      executablePath: "/usr/bin/chromium-browser",
+      executablePath: "/usr/bin/google-chrome",
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--single-process",
+        "--headless",
+        "--disable-gpu",
+        "--disable-sync",
+      ],
+      dumpio: true,
     });
 
     await this.gotoPage(url);
@@ -53,16 +62,16 @@ export default class Screenshoter {
     }
   }
 
-  public async takeScreenshotOfComment(id: string, postId: string) {
+  public async takeScreenshotOfComment(id: string, assetsDir: string) {
     const selector = `#${id}`;
-    const savePath = `./tmp/${postId}/comments/${id}.png`;
+    const savePath = `${assetsDir}/comments/${id}.png`;
     await this.takeScreenshotOfElement(selector, savePath);
     return { id: id, path: savePath };
   }
 
-  public async takeScreenshotOfTitle(postId: string) {
+  public async takeScreenshotOfTitle(assetsDir: string) {
     const selector = '[data-test-id="post-content"]';
-    const savePath = `./tmp/${postId}/title.png`;
+    const savePath = `${assetsDir}/title.png`;
     await this.takeScreenshotOfElement(selector, savePath);
     return { id: "title", path: savePath };
   }

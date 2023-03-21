@@ -2,9 +2,13 @@ import axios from "axios";
 import { Post, Comment } from "../../../types/post";
 import { textToSpeech } from "../../utils/google/textToSpeech.js";
 import Screenshoter from "../../Screenshoter.js";
-import { buildTmpDir } from "../../utils/buildTmpDir.js";
+import { buildFileDir } from "../../utils/buildTmpDir.js";
 import fs from "fs";
 import { getAudioDurationInSeconds } from "get-audio-duration";
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export async function getPostData(url): Promise<Post> {
   const jsonUrl = `${url}.json?sort=top`;
@@ -20,13 +24,15 @@ export async function getPostData(url): Promise<Post> {
   const screenshoter = new Screenshoter();
   await screenshoter.init(`${url}?sort=top`);
 
-  const tmpDir = await buildTmpDir(postData.name);
-  const title = await buildTitle(postData, screenshoter);
+  const { fileDir, assetsDir } = await buildFileDir(postData.name);
+  const title = await buildTitle(postData, screenshoter, assetsDir);
+
   const { comments, duration } = await buildComments(
     postData,
     commentsData,
     screenshoter,
-    title
+    title,
+    assetsDir
   );
 
   await screenshoter.close();
@@ -36,13 +42,13 @@ export async function getPostData(url): Promise<Post> {
     id: postData.name,
     comments: comments,
     duration: duration,
-    fileDir: tmpDir,
+    fileDir: fileDir,
   };
 }
 
-async function buildTitle(postData, screenshoter) {
+async function buildTitle(postData, screenshoter, assetsDir) {
   // get title image audio
-  const titleAudioPath = `./tmp/${postData.name}/title.mp3`;
+  const titleAudioPath = `${assetsDir}/title.mp3`;
 
   if (!fs.existsSync(titleAudioPath))
     await textToSpeech(postData.title, titleAudioPath);
@@ -50,7 +56,7 @@ async function buildTitle(postData, screenshoter) {
 
   // get title image
   const { path: titleImagePath } = await screenshoter.takeScreenshotOfTitle(
-    postData.name
+    assetsDir
   );
 
   const title = {
@@ -63,7 +69,13 @@ async function buildTitle(postData, screenshoter) {
   return title;
 }
 
-async function buildComments(postData, commentsData, screenshoter, title) {
+async function buildComments(
+  postData,
+  commentsData,
+  screenshoter,
+  title,
+  assetsDir
+) {
   const comments: Comment[] = [];
 
   let runningAudioDuration = title.duration;
@@ -77,7 +89,7 @@ async function buildComments(postData, commentsData, screenshoter, title) {
     if (comment.body.length > 800) continue;
 
     // get comment audio
-    const audioPath = `./tmp/${postData.name}/comments/${comment.name}.mp3`;
+    const audioPath = `${assetsDir}/comments/${comment.name}.mp3`;
 
     if (!fs.existsSync(audioPath)) await textToSpeech(comment.body, audioPath);
     const duration = await getAudioDurationInSeconds(audioPath);
@@ -88,7 +100,7 @@ async function buildComments(postData, commentsData, screenshoter, title) {
     // get comment image
     const { path } = await screenshoter.takeScreenshotOfComment(
       comment.name,
-      postData.name
+      assetsDir
     );
 
     comments.push({
@@ -102,5 +114,5 @@ async function buildComments(postData, commentsData, screenshoter, title) {
     if (comments.length >= 20) break; // max 20 comments (we shouldn't be here anyway)
   }
 
-  return { comments, duration: runningAudioDuration };
+  return { comments: comments, duration: runningAudioDuration };
 }

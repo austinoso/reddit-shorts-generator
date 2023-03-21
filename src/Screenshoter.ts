@@ -20,7 +20,6 @@ export default class Screenshoter {
         "--disable-gpu",
         "--disable-sync",
       ],
-      dumpio: true,
     });
 
     await this.gotoPage(url);

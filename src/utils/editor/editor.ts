@@ -1,10 +1,14 @@
 import editly from "editly";
 import { getVideoDurationInSeconds } from "get-video-duration";
 import * as dotenv from "dotenv";
+import Xvfb from "xvfb";
 dotenv.config();
 
 export async function editVideo(editSpec: any) {
+  var xvfb = new Xvfb();
+  xvfb.startSync();
   await editly(editSpec);
+  xvfb.stopSync();
 }
 
 export async function buildEditSpec(post) {

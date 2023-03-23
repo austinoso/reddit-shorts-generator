@@ -6,10 +6,6 @@ import { buildFileDir } from "../buildTmpDir.js";
 import fs from "fs";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 
-async function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export async function getPostData(url): Promise<Post> {
   const jsonUrl = `${url}.json?sort=top`;
 

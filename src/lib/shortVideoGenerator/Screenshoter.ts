@@ -1,8 +1,8 @@
-import { Browser, launch } from "puppeteer";
+import { Page, Browser, launch } from "puppeteer";
 
 export default class Screenshoter {
   private browser: Browser;
-  private page: any;
+  private page: Page;
 
   constructor() {
     this.browser = null;

@@ -1,8 +1,8 @@
 import axios from "axios";
-import { Post, Comment } from "../../../types/post";
-import { textToSpeech } from "../../utils/google/textToSpeech.js";
+import { Post, Comment } from "../../../../../types/post";
+import { textToSpeech } from "../google/textToSpeech.js";
 import Screenshoter from "../../Screenshoter.js";
-import { buildFileDir } from "../../utils/buildTmpDir.js";
+import { buildFileDir } from "../buildTmpDir.js";
 import fs from "fs";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 

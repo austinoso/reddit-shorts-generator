@@ -1,5 +1,5 @@
 // import * as dotenv from "dotenv";
-import { generateVideo } from "./src/generateVideo.js";
+import { generateVideo } from "./src/lib/shortVideoGenerator/generateVideo.js";
 
 // dotenv.config();
 

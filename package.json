@@ -13,6 +13,7 @@
   "author": "austinoso",
   "license": "ISC",
   "devDependencies": {
+    "@types/bull": "^4.10.0",
     "@types/express": "^4.17.17",
     "@types/node": "^18.11.17",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
@@ -24,6 +25,7 @@
     "@google-cloud/text-to-speech": "^4.2.1",
     "axios": "^1.2.1",
     "body-parser": "^1.20.2",
+    "bull": "^4.10.4",
     "dotenv": "^16.0.3",
     "editly": "^0.14.2",
     "esm": "^3.2.25",

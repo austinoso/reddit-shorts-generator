@@ -5,7 +5,7 @@ import Xvfb from "xvfb";
 dotenv.config();
 
 export async function editVideo(editSpec: any) {
-  var xvfb = new Xvfb();
+  const xvfb = new Xvfb();
   xvfb.startSync();
   await editly(editSpec);
   xvfb.stopSync();

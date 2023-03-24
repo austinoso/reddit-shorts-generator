@@ -8,9 +8,10 @@ services:
     build: ./
     container_name: shorts-bot
     command: npm run start
+    privileged: true
     environment:
       POST: "${POST}"
       GOOGLE_APPLICATION_CREDENTIALS: "/app/credentials.json"
     volumes:
-      - shorts-bot:/app/output
+      - REPLACE_WITH_OUTPUT_FILE_PATH_OR_VOLUME_NAME:/app/output
       - ${CREDENTIALS_VOLUME}:/app/credentials.json

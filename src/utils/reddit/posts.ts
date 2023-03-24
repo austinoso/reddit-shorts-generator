@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Post, Comment } from "../../../../../types/post";
+import { Post, Comment } from "../../../types/post";
 import { textToSpeech } from "../google/textToSpeech.js";
 import Screenshoter from "../../Screenshoter.js";
 import { buildFileDir } from "../buildTmpDir.js";

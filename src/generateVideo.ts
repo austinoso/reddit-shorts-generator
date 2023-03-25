@@ -7,4 +7,6 @@ export async function generateVideo(postUrl) {
   // edit video
   const editSpec = await buildEditSpec(post);
   await editVideo(editSpec);
+
+  return post;
 }
